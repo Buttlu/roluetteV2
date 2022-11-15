@@ -4,11 +4,6 @@
 #include <thread>
 using namespace std;
 
-//<heads up>
-//if a letter is inputed when asked for a number, an infinite loop will occur
-//using cin.ignore() prevents this by removing the letters and cin.clear() clears the error flag so future inputs work
-//</heads up>
-
 //gets random number and announces it
 int randomNum() {
     srand(time(0));
@@ -28,7 +23,7 @@ int randomNum() {
 
 //writes out and calculates the playters winnings
 int won(int betAmount, int winMultiplier) {
-    cout << "You won! You got " << betAmount * 2 << "kr" << endl;
+    cout << "You won! You got " << betAmount * winMultiplier << "kr" << endl;
     return betAmount * winMultiplier;
 }
 
@@ -37,6 +32,34 @@ int won(int betAmount, int winMultiplier) {
 int lost(int betAmount) {
     cout << "You lost. You lost " << betAmount << "kr" << endl;
     return betAmount * (-1);
+}
+
+int loan() {
+    int loanAmount = 0;
+    string agree;
+
+    system("cls");
+    cout << "-----------------------------------\nWelcome to the bank\n-----------------------------------" << endl;
+    
+    //get's loan amount
+    cout << "Type how much you want your loan to be: ";
+    cin.clear();
+    cin.ignore();
+    cin >> loanAmount;
+    cout << "\nYou want to loan " << loanAmount << "kr" << endl;
+    cout << "Interest on loans are 0.6%. It will apply after every turn you play" << endl; //TOS
+    while (true) {
+        //gets if user wants to take or cancel loan
+        cout << "Type 'agree' to complete loan \nType 'cancel' to cancel" << endl;
+        cin >> agree;
+        if (agree == "agree")
+            return loanAmount;
+        else if (agree == "cancel")
+            return 0;
+        else
+            cout << "Invalid option";
+    }
+    return 0;
 }
 
 int colorBet(int betAmount) {
@@ -61,10 +84,12 @@ int colorBet(int betAmount) {
         return lost(betAmount);
 }
 
+//handles betting a number
 int numberBet(int betAmount) {
     int randn, betn;
     while (true) {
         cin.ignore();
+        //get's what the user wants to bet on
         cout << "\nType the number you want to bet on (1 - 36): ";
         cin >> betn;
         if (betn < 1 || betn > 36)
@@ -82,22 +107,30 @@ int numberBet(int betAmount) {
 
 
 int main() {
-    int balance = 1000, betAmount = 0, betType, age;
+    int age;
+    int balance = 1000, betAmount = 0, betType, amountWon = 0, totalAmountWon = 0;
+    int amountLoaned = 0, noMoney;
+    double debt = 0.0;
     string continued;
 
     cout << "How old are you? ";
     cin >> age;
     //skips if age is less than 18
     while (age >= 18) {
+        debt *= 1.006;
         system("cls"); //clears screen
         cout << "\nCurrent balance: " << balance << "kr" << endl;
+        if (debt > 0) cout << "Current debt: " << debt << "kr" << endl;
+        else {}
         //asks for bet amount until a valid value is given
         while (true) {
             cin.clear();
             cin.ignore();
             cout << "\nHow much do you want to bet (100kr, 300kr, or 500kr)? ";
             cin >> betAmount;
-            if (betAmount == 100 || betAmount == 300 || betAmount == 500)
+            if (betAmount > balance)
+                cout << "\nNot enough money for that alternative" << endl;
+            else if (betAmount == 100 || betAmount == 300 || betAmount == 500)
                 break;
             else
                 cout << "\nInvalid bet amount. Please choose one of the alternatives provided" << endl;
@@ -108,29 +141,68 @@ int main() {
             cin.ignore();
             cout << "\nWhat do you want to bet on (type 1 for color or 2 for number): ";
             cin >> betType;
+            //gets and calculates winnings/losses
             if (betType == 1) {
-                balance += colorBet(betAmount);
+                amountWon = colorBet(betAmount);
+                balance += amountWon;
+                totalAmountWon += amountWon;
                 break;
             }
+            //gets and calculates winnings/losses
             else if (betType == 2) {
-                balance += numberBet(betAmount);
+                amountWon = numberBet(betAmount);
+                balance += amountWon;
+                totalAmountWon += amountWon;
                 break;
             }
             else
                 cout << "Invalid bet type. Please choose one of the alternatives provided" << endl;
         }
-        cout << "\nCurrent balance: " << balance << endl;
+        cout << "\nCurrent balance: " << balance << "kr" << endl;
+        if (debt > 0) cout << "Current debt: " << debt << "kr" << endl;
 
         //ends if balance is below 100
         if (balance < 100) {
             cout << "Too little money left" << endl;
-            break;
+            while (true) {
+                cout << "Type 1 to stop playing \nType 2 to add another 1000kr \nType 3 to take a loan" << endl;
+                cin >> noMoney;
+                if (noMoney == 1)
+                    return 0;
+                //gets and calculates all money differences from the deposit
+                else if (noMoney == 2) {
+                    balance += 1000;
+                    totalAmountWon -= 1000;
+                    cout << "1000kr was added to your balance" << endl;
+                    break;
+                }
+                //gets and calculates all money differences from the loan
+                else if (noMoney == 3) {
+                    amountLoaned = loan();
+                    balance += amountLoaned;
+                    debt += amountLoaned;
+                    cout << "You loaned " << amountLoaned << "kr";
+                    break;
+                }
+                else
+                    cout << "Invalid choice, try again" << endl;
+            }
         }
-        
+        else {}
+        //gets if the user wants to quit
         cout << "\nType 'stop' to stop, type anything else to continue" << endl;
         cin >> continued;
         if (continued == "stop")
             break;
+        else {}
     }
-    cout << "Thanks for playing!" << "\nTotal earnings: " << balance - 1000 << "kr" << endl;
+    //thanks for playing and displays total winnings and balance
+    if (debt > 0) {
+        cout << "Removing debt from total winings...";
+        totalAmountWon -= debt;
+    }
+    balance += totalAmountWon;
+    cout << "Thanks for playing!" << endl;
+    cout << "Total earnings: " << totalAmountWon << "kr" << endl;
+    cout << "Final balance: " << balance << "kr" << endl;
 }
