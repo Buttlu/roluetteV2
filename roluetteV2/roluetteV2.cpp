@@ -27,7 +27,6 @@ int won(int betAmount, int winMultiplier) {
     return betAmount * winMultiplier;
 }
 
-
 //writes out and calculates the playters losses
 int lost(int betAmount) {
     cout << "You lost. You lost " << betAmount << "kr" << endl;
@@ -149,14 +148,14 @@ int main() {
             cin.ignore();
             cout << "\nWhat do you want to bet on (type 1 for color or 2 for number): ";
             cin >> betType;
-            //gets and calculates winnings/losses
+            //gets and calculates winnings/losses for color bet
             if (betType == 1) {
                 amountWon = colorBet(betAmount);
                 balance += amountWon;
                 totalAmountWon += amountWon;
                 break;
             }
-            //gets and calculates winnings/losses
+            //gets and calculates winnings/losses for number bet
             else if (betType == 2) {
                 amountWon = numberBet(betAmount);
                 balance += amountWon;
@@ -170,12 +169,13 @@ int main() {
         cout << "Total winnings: " << totalAmountWon << "kr" << endl;
         if (debt > 0) cout << "Current debt: " << debt << "kr" << endl;
 
-        //ends if balance is below 100
+        //activates if there's too little money left
         if (balance < 100) {
             cout << "Too little money left" << endl;
             while (true) {
                 cout << "Type 1 to stop playing \nType 2 to add another 1000kr \nType 3 to take a loan" << endl;
                 cin >> noMoney;
+                //stops the program
                 if (noMoney == 1)
                     return 0;
                 //gets and calculates all money differences from the deposit
