@@ -167,6 +167,7 @@ int main() {
                 cout << "Invalid bet type. Please choose one of the alternatives provided" << endl;
         }
         cout << "\nCurrent balance: " << balance << "kr" << endl;
+        cout << "Total winnings: " << totalAmountWon << "kr" << endl;
         if (debt > 0) cout << "Current debt: " << debt << "kr" << endl;
 
         //ends if balance is below 100
