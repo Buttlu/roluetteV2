@@ -7,7 +7,7 @@ using namespace std;
 //gets random number and announces it
 int randomNum() {
     srand(time(0));
-    int randn = rand() % 36 + 1;
+    int random_number = rand() % 36 + 1;
     //writes out the "spinning..." part with delays
     for (int i = 0; i < 6; i++) {
         cout << "spinning..." << endl;
@@ -16,9 +16,9 @@ int randomNum() {
 
     //gets the color using modulo and a ternary operation
     //red == 0 and black == 1 in this case
-    string randColor = randn % 2 == 0 ? "red" : "black";
-    cout << "\nNumber was " << randn << "\nColor was " << randColor << endl;
-    return randn;
+    string randColor = random_number % 2 == 0 ? "red" : "black";
+    cout << "\nNumber was " << random_number << "\nColor was " << randColor << endl;
+    return random_number;
 }
 
 //writes out and calculates the playters winnings
@@ -59,11 +59,11 @@ int loan() {
         else
             cout << "Invalid option";
     }
-    return 0;
+    return 0; //needed to make the funtction stop yelling at me (throws 'not all paths return value' error otherwise), this won't be used.
 }
 
 int colorBet(int betAmount) {
-    int randn, betColor;
+    int random_number, betColor;
     while (true) {
         cin.ignore();
         //gets color bet
@@ -76,9 +76,9 @@ int colorBet(int betAmount) {
     }
     
     //gets random number and check if it won
-    randn = randomNum();
+    random_number = randomNum();
     //% 2 gives 0 or 1 and betColor is 1 or 2, so 1 is added onto the modulo part
-    if ((randn % 2) + 1 == betColor)
+    if ((random_number % 2) + 1 == betColor)
         return won(betAmount, 2);
     else
         return lost(betAmount);
@@ -86,20 +86,21 @@ int colorBet(int betAmount) {
 
 //handles betting a number
 int numberBet(int betAmount) {
-    int randn, betn;
+    int random_number, bet_number;
     while (true) {
         cin.ignore();
         //get's what the user wants to bet on
         cout << "\nType the number you want to bet on (1 - 36): ";
-        cin >> betn;
-        if (betn < 1 || betn > 36)
+        cin >> bet_number;
+        if (bet_number < 1 || bet_number > 36)
             cout << "Invalid number, please choose another" << endl;
         else
             break;
     }
 
-    randn = randomNum();
-    if (randn == betn)
+    //gets rendom number and checks if it matches the betting number
+    random_number = randomNum();
+    if (random_number == bet_number)
         return won(betAmount, 10);
     else 
         return lost(betAmount);
@@ -107,6 +108,8 @@ int numberBet(int betAmount) {
 
 
 int main() {
+    //variable creation. Variables on same line are used in related fields. 1st line is age, 2nd is for betting, 
+    //and 3rd (and 4th) is for when the player is out of money and need more.
     int age;
     int balance = 1000, betAmount = 0, betType, amountWon = 0, totalAmountWon = 0;
     int amountLoaned = 0, noMoney;
@@ -116,7 +119,12 @@ int main() {
     cout << "How old are you? ";
     cin >> age;
     //skips if age is less than 18
-    while (age >= 18) {
+    if (age < 18) {
+        cout << "Too young to play" << endl;
+        return 0;
+    }
+
+    while (true) {
         debt *= 1.006;
         system("cls"); //clears screen
         cout << "\nCurrent balance: " << balance << "kr" << endl;
@@ -201,7 +209,6 @@ int main() {
         cout << "Removing debt from total winings...";
         totalAmountWon -= debt;
     }
-    balance += totalAmountWon;
     cout << "Thanks for playing!" << endl;
     cout << "Total earnings: " << totalAmountWon << "kr" << endl;
     cout << "Final balance: " << balance << "kr" << endl;
