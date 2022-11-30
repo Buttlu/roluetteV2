@@ -49,7 +49,7 @@ int loan() {
     cout << "Interest on loans are 0.6%. It will apply after every turn you play" << endl; //TOS
     while (true) {
         //gets if user wants to take or cancel loan
-        cout << "Type 'agree' to complete loan \nType 'cancel' to cancel" << endl;
+        cout << "Type 'agree' to complete loan \nType 'cancel' to cancel (type in lowercase)" << endl;
         cin >> agree;
         if (agree == "agree")
             return loanAmount;
@@ -114,6 +114,7 @@ int main() {
     int amountLoaned = 0, noMoney;
     double debt = 0.0;
     string continued;
+    bool stillPlaying = false;
 
     cout << "How old are you? ";
     cin >> age;
@@ -166,7 +167,7 @@ int main() {
                 cout << "Invalid bet type. Please choose one of the alternatives provided" << endl;
         }
         cout << "\nCurrent balance: " << balance << "kr" << endl;
-        cout << "Total winnings: " << totalAmountWon << "kr" << endl;
+        if (stillPlaying) cout << "Total winnings: " << totalAmountWon << "kr" << endl;
         if (debt > 0) cout << "Current debt: " << debt << "kr" << endl;
 
         //activates if there's too little money left
@@ -199,12 +200,14 @@ int main() {
         }
         else {}
         //gets if the user wants to quit
-        cout << "\nType 'stop' to stop, type anything else to continue" << endl;
+        cout << "\nType 'stop' to stop, type anything else to continue (type in lowercase)" << endl;
         cin >> continued;
         if (continued == "stop")
             break;
-        else {}
+        else
+            stillPlaying = true;
     }
+    system("cls");
     //thanks for playing and displays total winnings and balance
     if (debt > 0) {
         cout << "Removing debt from total winings...";
